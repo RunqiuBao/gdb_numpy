@@ -97,13 +97,16 @@ def to_array(var,shape = None):
     ranges = [range(bound) for bound in bounds]
     indices = itertools.product(*ranges)
     narray = np.zeros(bounds, dtype = _type_list[dtype])
+    print("indices: {}".format(indices))
     for index in indices:
         start_ind = 0; val = gdb.parse_and_eval(var)
         for func, arg_n in zip(deref_func,arg_no):
             end_ind = start_ind + arg_n
             val = func(val,index[start_ind:end_ind])
             start_ind = end_ind
-        narray[index] = _type_list[dtype](val)    
+        narray[index] = _type_list[dtype](val)
+        if index % 1000 == 0:
+            print("progress: {} / {}".format(index, len(indices)))
     return narray
 
 def _get_deref_funcs(val,shape = None):
